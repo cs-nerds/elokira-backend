@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val ktorVersion = "1.5.0"
 val exposedVersion = "0.29.1"
 val postgresVersion = "42.2.19.jre7"
-val hikariCpVersion = "3.4.5"
+val hikariCpVersion = "4.0.2"
 val flywayVersion = "7.5.3"
 val ktorFlywayVersion = "1.2.2"
 val logbackVersion = "1.2.3"
@@ -14,7 +14,6 @@ val atVersion = "3.4.6"
 val seleniumVersion = "3.141.59"
 val webDriverVersion = "4.3.1"
 val guavaVersion = "30.1-jre"
-
 
 plugins {
     kotlin("jvm") version "1.4.30"
