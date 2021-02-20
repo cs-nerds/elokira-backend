@@ -13,7 +13,7 @@ val junitVersion = "5.7.0"
 val atVersion = "3.4.6"
 val seleniumVersion = "3.141.59"
 val webDriverVersion = "3.8.1"
-val guavaVersion = "29.0-jre"
+val guavaVersion = "30.1-jre"
 
 plugins {
     kotlin("jvm") version "1.4.21-2"
