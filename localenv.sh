@@ -1,0 +1,1 @@
+export $(cat local.env | grep -v '#' | awk '/=/ {print $1}')
