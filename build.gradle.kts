@@ -17,7 +17,7 @@ val guavaVersion = "30.1-jre"
 
 
 plugins {
-    kotlin("jvm") version "1.4.21-2"
+    kotlin("jvm") version "1.4.30"
     application
 }
 
