@@ -1,22 +1,22 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val ktorVersion = "1.5.0"
-val exposedVersion = "0.28.1"
-val postgresVersion = "42.2.18.jre7"
+val exposedVersion = "0.29.1"
+val postgresVersion = "42.2.19.jre7"
 val hikariCpVersion = "4.0.2"
-val flywayVersion = "7.5.0"
+val flywayVersion = "7.5.3"
 val ktorFlywayVersion = "1.2.2"
 val logbackVersion = "1.2.3"
-val assertjVersion = "3.18.1"
+val assertjVersion = "3.19.0"
 val restAssuredVersion = "4.3.3"
-val junitVersion = "5.7.0"
+val junitVersion = "5.7.1"
 val atVersion = "3.4.6"
 val seleniumVersion = "3.141.59"
-val webDriverVersion = "3.8.1"
+val webDriverVersion = "4.3.1"
 val guavaVersion = "30.1-jre"
 
 plugins {
-    kotlin("jvm") version "1.4.21-2"
+    kotlin("jvm") version "1.4.30"
     application
 }
 
