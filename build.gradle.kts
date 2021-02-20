@@ -12,7 +12,7 @@ val restAssuredVersion = "4.3.3"
 val junitVersion = "5.7.0"
 val atVersion = "3.4.6"
 val seleniumVersion = "3.141.59"
-val webDriverVersion = "3.8.1"
+val webDriverVersion = "4.3.1"
 val guavaVersion = "30.1-jre"
 
 
