@@ -16,6 +16,7 @@ import service.*
 import util.JsonMapper.defaultMapper
 import web.index
 import web.user
+import java.util.*
 
 @ExperimentalCoroutinesApi
 @KtorExperimentalAPI
@@ -41,8 +42,8 @@ fun Application.module() {
             realm = authService.realm
             validate { credential ->
                 if (credential.payload.audience.contains(authService.audience)) {
-                    val claim = credential.payload.getClaim("id").asInt()
-                    UserService().getUser(claim) as Principal
+                    val claim = credential.payload.getClaim("id").toString()
+                    UserService().getUser(UUID.fromString(claim)) as Principal
                 } else null
             }
         }

@@ -1,19 +1,20 @@
 package model
 
 import org.jetbrains.exposed.sql.Table
+import java.util.*
 
 object Logins : Table() {
-    val loginId = integer("loginId").autoIncrement()
+    val loginId = uuid("loginId")
     val userId = reference("userId", Users.userId)
-    val loginCode = integer("loginCode")
+    val loginCode = varchar("loginCode", 32)
     val activated = bool("activated")
     override val primaryKey = PrimaryKey(loginId)
 }
 
 data class Login(
-    val loginId: Int?,
-    val userId: Int?,
-    val loginCode: Int,
+    val loginId: UUID? = UUID.randomUUID(),
+    val userId: UUID,
+    val loginCode: String,
     var activated: Boolean? = false
 )
 

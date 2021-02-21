@@ -28,7 +28,8 @@ class AuthService(
         .withSubject("Authentication")
         .withIssuer(issuer)
         .withAudience(audience)
-        .withClaim("id", login.loginId)
+        .withClaim("loginId", login.loginId as String)
+        .withClaim("loginCode", login.loginCode)
         .withExpiresAt(getExpiration())
         .sign(algorithm)
 

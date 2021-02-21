@@ -18,9 +18,10 @@ import service.*
 import util.CodeGenerator
 import util.JsonMapper.defaultMapper
 import java.lang.IllegalStateException
+import java.util.*
 
 suspend fun createLogin(user: User, loginService: LoginService, config: ApplicationConfig): Login {
-    val code = CodeGenerator().generate().toInt()
+    val code = CodeGenerator().generate()
     val message = """
         Hi ${user.firstName}, your login code for Elokira Vote is:
         $code 
@@ -49,8 +50,8 @@ fun Route.user(userService: UserService, loginService: LoginService, authService
         // test authentication
         authenticate {
             get("/{userId}") {
-                val userId = call.parameters["userId"]?.toInt() ?: throw IllegalStateException("Must provide id")
-                when (val user = userService.getUser(userId)) {
+                val userId = call.parameters["userId"] ?: throw IllegalStateException("Must provide id")
+                when (val user = userService.getUser(UUID.fromString(userId))) {
                     null -> call.respond(HttpStatusCode.NotFound)
                     else -> call.respond(user)
                 }
@@ -138,8 +139,8 @@ fun Route.user(userService: UserService, loginService: LoginService, authService
         }
 
         delete("/{userId}") {
-            val userId = call.parameters["userId"]?.toInt() ?: throw IllegalStateException("Must provide id")
-            val removed = userService.deleteUser(userId)
+            val userId = call.parameters["userId"] ?: throw IllegalStateException("Must provide id")
+            val removed = userService.deleteUser(UUID.fromString(userId))
             if (removed) call.respond(HttpStatusCode.OK)
             else call.respond(HttpStatusCode.NotFound)
         }

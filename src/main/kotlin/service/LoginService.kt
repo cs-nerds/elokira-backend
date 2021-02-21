@@ -3,6 +3,7 @@ package service
 import model.*
 import org.jetbrains.exposed.sql.*
 import service.DatabaseFactory.dbQuery
+import java.util.*
 
 class LoginService {
 
@@ -14,7 +15,7 @@ class LoginService {
 
     fun removeChangeListener(loginId: Int) = listeners.remove(loginId)
 
-    private suspend fun onChange(type: ChangeType, loginId: Int, entity: Login? = null) {
+    private suspend fun onChange(type: ChangeType, loginId: UUID, entity: Login? = null) {
         listeners.values.forEach {
             it.invoke(Notification(type, loginId, entity))
         }
@@ -24,7 +25,7 @@ class LoginService {
         Logins.selectAll().map { toLogin(it) }
     }
 
-    suspend fun getLogin(loginId: Int): Login? = dbQuery {
+    suspend fun getLogin(loginId: UUID): Login? = dbQuery {
         Logins.select{
             (Logins.loginId eq loginId)
         }.mapNotNull { toLogin(it) }.singleOrNull()
@@ -52,7 +53,7 @@ class LoginService {
     }
 
     suspend fun addLogin(login: Login): Login {
-        var loginId = 0
+        var loginId: UUID = UUID.randomUUID()
         dbQuery {
             loginId = (Logins.insert {
                 it[loginCode] = login.loginCode
@@ -66,7 +67,7 @@ class LoginService {
         }
     }
 
-    suspend fun deleteLogin(loginId: Int): Boolean { // log out
+    suspend fun deleteLogin(loginId: UUID): Boolean { // log out
         return dbQuery {
             Logins.deleteWhere {
                 Logins.loginId eq loginId

@@ -1,9 +1,10 @@
 package model
 
 import org.jetbrains.exposed.sql.Table
+import java.util.*
 
 object Users : Table() {
-    val userId = integer("userId").autoIncrement()
+    val userId = uuid("userId")
     val firstName = varchar("firstName", 128)
     val lastName = varchar("lastName", 128)
     val phoneNumber = varchar("phoneNumber", 30).uniqueIndex()
@@ -13,7 +14,7 @@ object Users : Table() {
 }
 
 data class User(
-    val userId: Int,
+    val userId: UUID = UUID.randomUUID(),
     val firstName: String,
     val lastName: String,
     val phoneNumber: String,
@@ -22,7 +23,7 @@ data class User(
 )
 
 data class NewUser(
-    val userId: Int?,
+    val userId: UUID?,
     val firstName: String,
     val lastName: String,
     val phoneNumber: String,

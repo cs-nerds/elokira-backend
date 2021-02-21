@@ -3,6 +3,7 @@ package service
 import model.*
 import org.jetbrains.exposed.sql.*
 import service.DatabaseFactory.dbQuery
+import java.util.*
 
 class UserService {
 
@@ -14,7 +15,7 @@ class UserService {
 
     fun removeChangeListener(userId: Int) = listeners.remove(userId)
 
-    private suspend fun onChange(type: ChangeType, userId: Int, entity: User? = null) {
+    private suspend fun onChange(type: ChangeType, userId: UUID, entity: User? = null) {
         listeners.values.forEach{
             it.invoke(Notification(type,userId,entity))
         }
@@ -24,7 +25,7 @@ class UserService {
         Users.selectAll().map { toUser(it) }
     }
 
-    suspend fun getUser(userId: Int): User? = dbQuery {
+    suspend fun getUser(userId: UUID): User? = dbQuery {
         Users.select{
             (Users.userId eq userId)
         }.mapNotNull { toUser(it) }.singleOrNull()
@@ -62,7 +63,7 @@ class UserService {
     }
 
     suspend fun addUser(user: NewUser): User {
-        var userId = 0
+        var userId: UUID = UUID.randomUUID()
         dbQuery {
             userId = (Users.insert{
                 it[firstName] = user.firstName
@@ -78,7 +79,7 @@ class UserService {
         }
     }
 
-    suspend fun deleteUser(userId: Int): Boolean {
+    suspend fun deleteUser(userId: UUID): Boolean {
         return dbQuery {
             Users.deleteWhere {
                 Users.userId eq userId
