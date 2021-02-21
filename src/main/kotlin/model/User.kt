@@ -9,7 +9,10 @@ object Users : Table() {
     val lastName = varchar("lastName", 128)
     val phoneNumber = varchar("phoneNumber", 30).uniqueIndex()
     val idNumber = varchar("idNumber", 30).uniqueIndex()
+    val dateCreated = long("dateCreated")
     val dateUpdated = long("dateUpdated")
+    val updatedBy = reference("updatedBy", Users.userId)
+    val admin = bool("admin")
     override val primaryKey = PrimaryKey(userId)
 }
 
