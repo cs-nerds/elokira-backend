@@ -64,6 +64,27 @@ fun Route.user(userService: UserService, loginService: LoginService, authService
             }
         }
 
+        post("/") {
+            val newUser = call.receive<NewUser>()
+            val unverifiedUser = UnverifiedUser(newUser.firstName, newUser.idNumber)
+            if (userService.getUserByIdNumber(newUser.idNumber) != null) {
+                call.respond(HttpStatusCode.Conflict, mapOf("error" to "User already exists"))
+            } else {
+                try {
+                    verifyUser(unverifiedUser, config)
+                    val user = userService.addUser(newUser)
+                    val login = createLogin(user, loginService, config)
+                    call.respond(HttpStatusCode.Created, mapOf("loginId" to login.loginId))
+                } catch (e: Exception) {
+                    println(e)
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        UnverifiedUser(unverifiedUser.firstName.toLowerCase().capitalize(), unverifiedUser.idNumber)
+                    )
+                }
+            }
+        }
+
         post("/login/request") {
             val loginAttempt = call.receive<LoginRequest>()
             val user = userService.getUserByIdNumber(loginAttempt.idNumber)
@@ -99,51 +120,63 @@ fun Route.user(userService: UserService, loginService: LoginService, authService
 
         authenticate {
             get("/") {
-                call.respond(userService.getAllUsers())
-            }
-
-            post("/") {
-                val newUser = call.receive<NewUser>()
-                val unverifiedUser = UnverifiedUser(newUser.firstName, newUser.idNumber)
-                if (userService.getUserByIdNumber(newUser.idNumber) != null) {
-                    call.respond(HttpStatusCode.Conflict, mapOf("error" to "User already exists"))
+                val user = call.authentication.principal as User
+                if (user.admin) {
+                    call.respond(userService.getAllUsers())
                 } else {
-                    try {
-                        verifyUser(unverifiedUser, config)
-                        val user = userService.addUser(newUser)
-                        val login = createLogin(user, loginService, config)
-                        call.respond(HttpStatusCode.Created, mapOf("loginId" to login.loginId))
-                    } catch (e: Exception) {
-                        println(e)
-                        call.respond(
-                            HttpStatusCode.Forbidden,
-                            UnverifiedUser(unverifiedUser.firstName.toLowerCase().capitalize(), unverifiedUser.idNumber)
-                        )
-                    }
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        mapOf("error" to "Insufficient permissions.")
+                    )
                 }
             }
 
             put("/") {
                 val user = call.receive<NewUser>()
-                when(val updated = userService.updateUser(user)) {
-                    null -> call.respond(HttpStatusCode.NotFound)
-                    else -> call.respond(HttpStatusCode.OK, updated)
+                val loggedInUser = call.authentication.principal as User
+                if (loggedInUser.userId == user.userId || loggedInUser.admin) {
+                    when(val updated = userService.updateUser(user)) {
+                        null -> call.respond(HttpStatusCode.NotFound)
+                        else -> call.respond(HttpStatusCode.OK, updated)
+                    }
+                } else {
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        mapOf("error" to "Not allowed.")
+                    )
                 }
+
             }
 
             get("/{userId}") {
                 val userId = call.parameters["userId"] ?: throw IllegalStateException("Must provide id")
-                when (val user = userService.getUser(UUID.fromString(userId))) {
-                    null -> call.respond(HttpStatusCode.NotFound)
-                    else -> call.respond(user)
+                val loggedInUser = call.authentication.principal as User
+                if (loggedInUser.userId == UUID.fromString(userId) || loggedInUser.admin) {
+                    when (val user = userService.getUser(UUID.fromString(userId))) {
+                        null -> call.respond(HttpStatusCode.NotFound)
+                        else -> call.respond(user)
+                    }
+                } else {
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        mapOf("error" to "Not allowed")
+                    )
                 }
             }
 
             delete("/{userId}") {
-                val userId = call.parameters["userId"] ?: throw IllegalStateException("Must provide id")
-                val removed = userService.deleteUser(UUID.fromString(userId))
-                if (removed) call.respond(HttpStatusCode.OK)
-                else call.respond(HttpStatusCode.NotFound)
+                val loggedInUser = call.authentication.principal as User
+                if (loggedInUser.admin) {
+                    val userId = call.parameters["userId"] ?: throw IllegalStateException("Must provide id")
+                    val removed = userService.deleteUser(UUID.fromString(userId))
+                    if (removed) call.respond(HttpStatusCode.OK)
+                    else call.respond(HttpStatusCode.NotFound)
+                } else {
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        mapOf("error" to "Insufficient permissions")
+                    )
+                }
             }
         }
     }
