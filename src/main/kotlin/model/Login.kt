@@ -13,10 +13,12 @@ object Logins : Table() {
 
 data class Login(
     val loginId: UUID? = UUID.randomUUID(),
-    val userId: UUID,
+    val userId: UUID?,
     val loginCode: String,
     var activated: Boolean? = false
 )
+
+
 
 data class LoginRequest(
     val idNumber: String

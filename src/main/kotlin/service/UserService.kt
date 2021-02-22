@@ -63,19 +63,23 @@ class UserService {
     }
 
     suspend fun addUser(user: NewUser): User {
-        var userId: UUID = UUID.randomUUID()
+        val thisUserId: UUID = user.userId!!
         dbQuery {
-            userId = (Users.insert{
+            Users.insert{
+                it[userId] = thisUserId
                 it[firstName] = user.firstName
                 it[lastName] = user.lastName
                 it[phoneNumber] = user.phoneNumber
                 it[idNumber] = user.idNumber
+                it[dateCreated] = System.currentTimeMillis()
                 it[dateUpdated] = System.currentTimeMillis()
-            } get Users.userId)
+                it[lastUpdatedBy] = thisUserId
+                it[admin] = false
+            }
         }
 
-        return getUser(userId)!!.also {
-            onChange(ChangeType.CREATE, userId, it)
+        return getUser(thisUserId)!!.also {
+            onChange(ChangeType.CREATE, thisUserId, it)
         }
     }
 
@@ -95,6 +99,9 @@ class UserService {
         lastName = row[Users.lastName],
         phoneNumber = row[Users.phoneNumber],
         idNumber = row[Users.idNumber],
-        dateUpdated = row[Users.dateUpdated]
+        dateCreated = row[Users.dateCreated],
+        dateUpdated = row[Users.dateUpdated],
+        lastUpdatedBy = row[Users.lastUpdatedBy],
+        admin = row[Users.admin]
     )
 }

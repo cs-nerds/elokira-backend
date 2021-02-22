@@ -11,22 +11,25 @@ object Users : Table() {
     val idNumber = varchar("idNumber", 30).uniqueIndex()
     val dateCreated = long("dateCreated")
     val dateUpdated = long("dateUpdated")
-    val updatedBy = reference("updatedBy", Users.userId)
+    val lastUpdatedBy = reference("updatedBy", Users.userId)
     val admin = bool("admin")
     override val primaryKey = PrimaryKey(userId)
 }
 
 data class User(
-    val userId: UUID = UUID.randomUUID(),
+    val userId: UUID,
     val firstName: String,
     val lastName: String,
     val phoneNumber: String,
     val idNumber: String,
-    val dateUpdated: Long
+    val dateCreated: Long,
+    val dateUpdated: Long,
+    val lastUpdatedBy: UUID,
+    val admin: Boolean
 )
 
 data class NewUser(
-    val userId: UUID?,
+    val userId: UUID? = UUID.randomUUID(),
     val firstName: String,
     val lastName: String,
     val phoneNumber: String,

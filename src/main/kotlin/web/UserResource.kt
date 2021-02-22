@@ -26,7 +26,7 @@ suspend fun createLogin(user: User, loginService: LoginService, config: Applicat
         Hi ${user.firstName}, your login code for Elokira Vote is:
         $code 
     """.trimIndent()
-    val login = loginService.addLogin(Login(null, user.userId, code))
+    val login = loginService.addLogin(Login(userId = user.userId, loginCode = code))
     val smsService = SMSService(config)
     smsService.send(message, listOf(user.phoneNumber))
     return login

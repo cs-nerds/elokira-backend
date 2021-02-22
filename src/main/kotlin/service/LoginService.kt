@@ -53,17 +53,18 @@ class LoginService {
     }
 
     suspend fun addLogin(login: Login): Login {
-        var loginId: UUID = UUID.randomUUID()
+        val thisLoginId = login.loginId!!
         dbQuery {
-            loginId = (Logins.insert {
+            Logins.insert {
+                it[loginId] = thisLoginId
                 it[loginCode] = login.loginCode
                 it[userId] = login.userId!!
                 it[activated] = login.activated!!
-            } get Logins.loginId)
+            }
         }
 
-        return getLogin(loginId)!!.also{
-            onChange(ChangeType.CREATE, loginId, it)
+        return getLogin(thisLoginId)!!.also{
+            onChange(ChangeType.CREATE, thisLoginId, it)
         }
     }
 
