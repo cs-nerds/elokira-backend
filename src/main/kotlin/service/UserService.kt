@@ -49,7 +49,6 @@ class UserService {
                         it[firstName] = user.firstName
                         it[lastName] = user.lastName
                         it[phoneNumber] = user.phoneNumber
-                        it[idNumber] = user.idNumber
                         it[dateUpdated] = System.currentTimeMillis()
                     }
                 }
