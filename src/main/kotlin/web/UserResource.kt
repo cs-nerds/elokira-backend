@@ -60,18 +60,22 @@ fun Route.user(userService: UserService, loginService: LoginService, authService
 
         post("/verify") {
             val unverifiedUser = call.receive<UnverifiedUser>()
-            try {
-                val verificationService = VerificationService(
-                    config.property("verification.url").getString(),
-                )
-                val verifiedUser = verifyUser(unverifiedUser, config) as VerifiedUser
-                call.respond(verifiedUser)
-            } catch (e: Exception) {
-                println(e)
+            if (userService.getUserByIdNumber(unverifiedUser.idNumber) != null) {
                 call.respond(
-                    HttpStatusCode.Forbidden,
-                    UnverifiedUser(unverifiedUser.firstName.toLowerCase().capitalize(), unverifiedUser.idNumber)
+                    HttpStatusCode.Conflict,
+                    mapOf("error" to "User exists, please login.")
                 )
+            } else {
+                try {
+                    val verifiedUser = verifyUser(unverifiedUser, config) as VerifiedUser
+                    call.respond(verifiedUser)
+                } catch (e: Exception) {
+                    println(e)
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        UnverifiedUser(unverifiedUser.firstName.toLowerCase().capitalize(), unverifiedUser.idNumber)
+                    )
+                }
             }
         }
 
