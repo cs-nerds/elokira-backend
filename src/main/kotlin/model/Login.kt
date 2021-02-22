@@ -1,7 +1,7 @@
 package model
 
 import org.jetbrains.exposed.sql.Table
-import java.util.*
+import java.util.UUID
 
 object Logins : Table() {
     val loginId = uuid("loginId")

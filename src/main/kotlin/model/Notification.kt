@@ -1,6 +1,6 @@
 package model
 
-import java.util.*
+import java.util.UUID
 
 enum class ChangeType { CREATE, UPDATE, DELETE}
 
