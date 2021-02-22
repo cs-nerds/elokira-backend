@@ -24,6 +24,14 @@ fun Application.module() {
     install(DefaultHeaders)
     install(CallLogging)
     install(WebSockets)
+    
+    install(CORS) {
+        method(HttpMethod.Options)
+        anyHost()
+        allowCredentials = true
+        allowNonSimpleContentTypes = true
+        maxAgeInSeconds = 360000
+    }
 
     install(ContentNegotiation) {
         register(ContentType.Application.Json, JacksonConverter(defaultMapper))
