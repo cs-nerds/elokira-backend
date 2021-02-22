@@ -1,5 +1,6 @@
 package model
 
+import io.ktor.auth.*
 import org.jetbrains.exposed.sql.Table
 import java.util.*
 
@@ -26,7 +27,7 @@ data class User(
     val dateUpdated: Long,
     val lastUpdatedBy: UUID,
     val admin: Boolean
-)
+): Principal
 
 data class NewUser(
     val userId: UUID? = UUID.randomUUID(),

@@ -42,8 +42,11 @@ fun Application.module() {
             realm = authService.realm
             validate { credential ->
                 if (credential.payload.audience.contains(authService.audience)) {
-                    val claim = credential.payload.getClaim("id").toString()
-                    UserService().getUser(UUID.fromString(claim)) as Principal
+                    val loginId = credential.payload.getClaim("loginId").asString()
+                    val userId = LoginService().getLogin(UUID.fromString(loginId))?.userId
+                    if (userId != null) {
+                        UserService().getUser(userId)
+                    } else null
                 } else null
             }
         }
