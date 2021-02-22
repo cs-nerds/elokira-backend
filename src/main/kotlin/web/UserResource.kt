@@ -102,10 +102,10 @@ fun Route.user(userService: UserService, loginService: LoginService, authService
         post("/login") {
             val loginAttempt = call.receive<Login>()
             val login = loginService.getLogin(loginAttempt.loginId!!)
-            if (login == null || login.activated!!) {
+            if (login == null || login.activated!! || login.loginCode != loginAttempt.loginCode) {
                 call.respond(
                     HttpStatusCode.Unauthorized,
-                    mapOf("error" to "Code used, request for another")
+                    mapOf("error" to "Authentication error")
                 )
             } else {
                 login.activated = true
