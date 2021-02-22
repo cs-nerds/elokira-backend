@@ -148,6 +148,11 @@ fun Route.user(userService: UserService, loginService: LoginService, authService
 
             }
 
+            get("/me") {
+                val loggedInUser = call.authentication.principal as User
+                call.respond(loggedInUser)
+            }
+
             get("/{userId}") {
                 val userId = call.parameters["userId"] ?: throw IllegalStateException("Must provide id")
                 val loggedInUser = call.authentication.principal as User
