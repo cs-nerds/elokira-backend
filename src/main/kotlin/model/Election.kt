@@ -1,6 +1,5 @@
 package model
 
-import io.ktor.auth.*
 import org.jetbrains.exposed.sql.Table
 import java.util.*
 
