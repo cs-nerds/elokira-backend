@@ -18,7 +18,7 @@ class CandidateService {
         }.mapNotNull { toCandidate(it) }.singleOrNull()
     }
 
-    suspend fun getElectionCandidates(electionId: UUID): List<CandidateDetails> = dbQuery {
+    suspend fun getElectionCandidatesByPosition(electionId: UUID, positionId: UUID): List<CandidateDetails> = dbQuery {
         (Users innerJoin  Candidates innerJoin Positions)
             .slice(
                 Candidates.candidateId,
@@ -28,7 +28,9 @@ class CandidateService {
             )
             .select{
                 (Positions.electionId eq electionId)
-            }.map { toCandidateDetails(it) }
+                (Positions.positionId eq positionId)
+            }
+            .map { toCandidateDetails(it) }
     }
 
     private fun toCandidate(row: ResultRow): Candidate = Candidate(
