@@ -19,7 +19,7 @@ class CandidateService {
     }
 
     suspend fun getElectionCandidatesByPosition(electionId: UUID, positionId: UUID): List<CandidateDetails> = dbQuery {
-        (Users innerJoin  Candidates innerJoin Positions)
+        Users.innerJoin(Candidates).innerJoin(Positions)
             .slice(
                 Candidates.candidateId,
                 Users.firstName,
