@@ -1,6 +1,8 @@
 package model
 
+import io.ktor.auth.*
 import org.jetbrains.exposed.sql.Table
+import java.util.*
 
 object Elections : Table() {
     val electionId = uuid("electionId")
@@ -11,3 +13,12 @@ object Elections : Table() {
     val dateModified = long("dateModified")
     override val primaryKey = PrimaryKey(electionId)
 }
+
+data class Election(
+    val electionId: UUID,
+    val electionName: String,
+    val startDate: Long,
+    val stopDate: Long,
+    val createdBy: UUID,
+    val dateModified: Long
+)
