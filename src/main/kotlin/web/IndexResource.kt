@@ -11,7 +11,11 @@ fun Route.index() {
     get("/") {
         call.respond(
             HttpStatusCode.OK,
-            mapOf("status" to "It works!", "message" to "Welcome to Elokira Vote API")
+            mapOf(
+                "status" to "It works!",
+                "message" to "Welcome to Elokira Vote API",
+                "postmanCollection" to System.getenv("POSTMAN_COLLECTION"),
+            )
         )
     }
 }
