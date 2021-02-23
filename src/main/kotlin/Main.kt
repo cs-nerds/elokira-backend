@@ -14,6 +14,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.jetbrains.exposed.sql.Database
 import service.*
 import util.JsonMapper.defaultMapper
+import web.election
 import web.index
 import web.user
 import java.util.*
@@ -62,9 +63,13 @@ fun Application.module() {
 
     val userService = UserService()
     val loginService = LoginService()
+    val electionService = ElectionService()
+    val positionService = PositionService()
+    val candidateService = CandidateService()
     install(Routing) {
         index()
         user(userService, loginService, authService, environment.config)
+        election(electionService, positionService, candidateService)
     }
 
 }
