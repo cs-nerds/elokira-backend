@@ -10,9 +10,9 @@ object DatabaseFactory {
     fun create(): DataSource {
         val config = HikariConfig().apply {
             driverClassName = "org.postgresql.Driver"
-            jdbcUrl = "jdbc:postgresql://localhost/elokira"
-            username = "scholar"
-            password = "scholar"
+            jdbcUrl = System.getenv("DB_JDBC_URL")
+            username = System.getenv("DB_USERNAME")
+            password = System.getenv("DB_PASSWORD")
             maximumPoolSize = 3
             isAutoCommit = false
             transactionIsolation = "TRANSACTION_REPEATABLE_READ"
