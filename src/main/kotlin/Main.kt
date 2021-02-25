@@ -28,6 +28,10 @@ fun Application.module() {
     
     install(CORS) {
         method(HttpMethod.Options)
+        method(HttpMethod.Get)
+        method(HttpMethod.Head)
+        method(HttpMethod.Post)
+        method(HttpMethod.Delete)
         anyHost()
         allowCredentials = true
         allowNonSimpleContentTypes = true
