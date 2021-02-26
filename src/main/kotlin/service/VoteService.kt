@@ -13,8 +13,8 @@ class VoteService {
     suspend fun addVote(vote: Vote) = dbQuery {
         Votes.insert {
             it[candidateId] = vote.candidateId
-            it[voterId] = vote.voterId
-            it[dateVoted] = vote.dateVoted
+            it[voterId] = vote.voterId!!
+            it[dateVoted] = vote.dateVoted!!
         }
     }
 

@@ -12,8 +12,8 @@ object Votes : Table() {
 
 data class Vote (
     val candidateId: UUID,
-    val voterId: UUID,
-    val dateVoted: Long = System.currentTimeMillis()
+    var voterId: UUID?,
+    val dateVoted: Long? = System.currentTimeMillis()
 )
 
 data class VoteCount (

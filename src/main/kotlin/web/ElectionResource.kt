@@ -110,10 +110,42 @@ fun Route.election(electionService: ElectionService, positionService: PositionSe
                 }
             }
             post("/{electionId}/vote") {
-                val electionId = call.parameters["electionId"] ?: throw IllegalStateException("Must provide id")
+                val electionIdParam = call.parameters["electionId"] ?: throw IllegalStateException("Must provide id")
+                val electionId = UUID.fromString(electionIdParam)
+                val votes = call.receive<List<Vote>>()
+                val election = electionService.getElection(electionId)
+                val votingTime = System.currentTimeMillis()
+                val loggedInUser = call.authentication.principal as User
+                val voterId = voterService.getVoter(loggedInUser.userId, electionId)!!.voterId
+                // check if election is open
+                if (election!!.startDate < votingTime && election.stopDate > votingTime) {
+                    // check if user has voted
+                    val voter = voterService.getVoter(loggedInUser.userId, electionId)!!
+                    if (!voter.voted) {
+                        votes.forEach{
+                            it.voterId = voterId
+                            voteService.addVote(it)
+                        }
+                        call.respond(
+                            HttpStatusCode.Created,
+                            mapOf("message" to "Votes cast successfully")
+                        )
+                    } else {
+                        call.respond(
+                            HttpStatusCode.Forbidden,
+                            mapOf("error" to "Already voted in this election")
+                        )
+                    }
+                } else {
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        mapOf("error" to "Election is not open")
+                    )
+                }
             }
-            // get("/{electionId}/results")
+            get("/{electionId}/results") {
 
+            }
         }
     }
 }
