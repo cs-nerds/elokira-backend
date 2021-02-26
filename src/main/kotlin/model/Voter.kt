@@ -12,10 +12,15 @@ object Voters : Table() {
     override val primaryKey = PrimaryKey(userId, electionId)
 }
 
-data class NewVoter(
-    val voterId: UUID = UUID.randomUUID(),
+data class Voter (
+    val voterId: UUID,
     val userId: UUID,
     val electionId: UUID,
-    val registrationDate: Long = System.currentTimeMillis(),
-    val voted: Boolean = false
+    val registrationDate: Long,
+    val voted: Boolean
+)
+
+data class NewVoter(
+    val userId: UUID,
+    val electionId: UUID,
 )

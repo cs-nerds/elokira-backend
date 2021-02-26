@@ -7,16 +7,14 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import model.NewCandidate
-import model.NewElection
-import model.NewPosition
-import model.User
+import model.*
+import org.apache.hc.core5.http.HttpStatus
 import service.*
 import java.lang.IllegalStateException
 import java.util.*
 
 @ExperimentalCoroutinesApi
-fun Route.election(electionService: ElectionService, positionService: PositionService, candidateService: CandidateService) {
+fun Route.election(electionService: ElectionService, positionService: PositionService, candidateService: CandidateService, voterService: VoterService, voteService: VoteService) {
     route("/elections") {
 
         authenticate {
@@ -92,6 +90,29 @@ fun Route.election(electionService: ElectionService, positionService: PositionSe
                     )
                 }
             }
+
+            post("/{electionId}/participate") {
+                val electionId = call.parameters["electionId"] ?: throw IllegalStateException("Must provide id")
+                val election = call.receive<Election>()
+                val loggedInUser = call.authentication.principal as User
+                val existingVoter = (voterService.getVoter(loggedInUser.userId, election.electionId) != null)
+                if (!existingVoter && election.electionId == UUID.fromString(electionId)) {
+                    val newVoter = NewVoter(loggedInUser.userId, election.electionId)
+                    call.respond(
+                        HttpStatusCode.Created,
+                        voterService.registerVoter(newVoter)
+                    )
+                } else {
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        mapOf("error" to "Already registered for this election")
+                    )
+                }
+            }
+            post("/{electionId}/vote") {
+                val electionId = call.parameters["electionId"] ?: throw IllegalStateException("Must provide id")
+            }
+            // get("/{electionId}/results")
 
         }
     }

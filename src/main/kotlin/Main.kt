@@ -70,10 +70,12 @@ fun Application.module() {
     val electionService = ElectionService()
     val positionService = PositionService()
     val candidateService = CandidateService()
+    val voterService = VoterService()
+    val voteService = VoteService()
     install(Routing) {
         index()
         user(userService, loginService, authService, environment.config)
-        election(electionService, positionService, candidateService)
+        election(electionService, positionService, candidateService, voterService, voteService)
     }
 
 }
