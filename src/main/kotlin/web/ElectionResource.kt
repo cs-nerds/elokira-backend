@@ -3,9 +3,12 @@ package web
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.*
+import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import model.NewElection
+import model.User
 import service.*
 import java.lang.IllegalStateException
 import java.util.*
@@ -18,6 +21,19 @@ fun Route.election(electionService: ElectionService, positionService: PositionSe
 
             get("/") {
                 call.respond(electionService.getAllElections())
+            }
+
+            post("/") {
+                val election = call.receive<NewElection>()
+                val loggedInUser = call.authentication.principal as User
+                if (loggedInUser.admin) {
+                    call.respond(electionService.createElection(election, loggedInUser.userId))
+                } else {
+                    call.respond(
+                        HttpStatusCode.Forbidden,
+                        mapOf("error" to "Insufficient Permissions")
+                    )
+                }
             }
 
             get("/{electionId}") {

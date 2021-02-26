@@ -20,16 +20,16 @@ class ElectionService {
         }.mapNotNull { toElection(it) }.singleOrNull()
     }
 
-    suspend fun createElection(election: NewElection): Election {
-        val thisElectionId = election.electionId
+    suspend fun createElection(election: NewElection, userId: UUID): Election {
+        val thisElectionId = UUID.randomUUID()
         dbQuery {
             Elections.insert {
                 it[electionId] = thisElectionId
                 it[electionName] = election.electionName
                 it[startDate] = election.startDate
                 it[stopDate] = election.stopDate
-                it[createdBy] = election.createdBy
-                it[dateModified] = election.dateModified
+                it[createdBy] = userId
+                it[dateModified] = System.currentTimeMillis()
             }
         }
 

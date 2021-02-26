@@ -23,10 +23,7 @@ data class Election(
 )
 
 data class NewElection(
-    val electionId: UUID = UUID.randomUUID(),
     val electionName: String,
     val startDate: Long,
     val stopDate: Long,
-    val createdBy: UUID,
-    val dateModified: Long = System.currentTimeMillis()
 )
