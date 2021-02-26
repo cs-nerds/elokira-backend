@@ -3,6 +3,7 @@ package service
 import model.*
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import service.DatabaseFactory.dbQuery
 import java.util.UUID
 
@@ -19,16 +20,17 @@ class CandidateService {
     }
 
     suspend fun getElectionCandidatesByPosition(electionId: UUID, positionId: UUID): List<CandidateDetails> = dbQuery {
-        Users.innerJoin(Candidates).innerJoin(Positions)
+
+        Positions.innerJoin(Candidates).innerJoin(Users, {Candidates.userId}, {userId})
             .slice(
                 Candidates.candidateId,
                 Users.firstName,
                 Users.lastName,
+                Positions.positionId,
                 Positions.positionName
             )
             .select{
-                (Positions.electionId eq electionId)
-                (Positions.positionId eq positionId)
+                ((Positions.electionId eq electionId) and (Positions.positionId eq positionId))
             }
             .map { toCandidateDetails(it) }
     }
@@ -44,6 +46,7 @@ class CandidateService {
 
     private fun toCandidateDetails(row: ResultRow): CandidateDetails = CandidateDetails(
         candidateId = row[Candidates.candidateId],
+        positionId = row[Positions.positionId],
         candidateFirstName = row[Users.firstName],
         candidateLastName = row[Users.lastName],
         positionName = row[Positions.positionName]

@@ -2,6 +2,7 @@ package service
 
 import model.Election
 import model.Elections
+import model.NewElection
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.*
 import service.DatabaseFactory.dbQuery
@@ -17,6 +18,22 @@ class ElectionService {
         Elections.select{
             (Elections.electionId eq electionId)
         }.mapNotNull { toElection(it) }.singleOrNull()
+    }
+
+    suspend fun createElection(election: NewElection): Election {
+        val thisElectionId = election.electionId
+        dbQuery {
+            Elections.insert {
+                it[electionId] = thisElectionId
+                it[electionName] = election.electionName
+                it[startDate] = election.startDate
+                it[stopDate] = election.stopDate
+                it[createdBy] = election.createdBy
+                it[dateModified] = election.dateModified
+            }
+        }
+
+        return getElection(thisElectionId)!!
     }
 
     private fun toElection(row: ResultRow): Election = Election(

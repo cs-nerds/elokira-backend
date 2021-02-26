@@ -1,6 +1,7 @@
 package model
 
 import org.jetbrains.exposed.sql.Table
+import java.util.*
 
 object Voters : Table() {
     val voterId = uuid("voterId").uniqueIndex()
@@ -10,3 +11,11 @@ object Voters : Table() {
     val voted = bool("voted")
     override val primaryKey = PrimaryKey(userId, electionId)
 }
+
+data class NewVoter(
+    val voterId: UUID = UUID.randomUUID(),
+    val userId: UUID,
+    val electionId: UUID,
+    val registrationDate: Long = System.currentTimeMillis(),
+    val voted: Boolean = false
+)

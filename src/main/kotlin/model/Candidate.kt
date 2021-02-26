@@ -24,6 +24,7 @@ data class Candidate(
 
 data class CandidateDetails(
     val candidateId: UUID,
+    val positionId: UUID,
     val candidateFirstName: String,
     val candidateLastName: String,
     val positionName: String
