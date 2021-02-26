@@ -19,3 +19,8 @@ data class Position(
     val createdBy: UUID,
     val dateModified: Long
 )
+
+data class NewPosition(
+    val positionName: String,
+    val electionId: UUID
+)

@@ -29,3 +29,8 @@ data class CandidateDetails(
     val candidateLastName: String,
     val positionName: String
 )
+
+data class NewCandidate(
+    val userId: UUID,
+    val positionId: UUID
+)

@@ -35,6 +35,22 @@ class CandidateService {
             .map { toCandidateDetails(it) }
     }
 
+    suspend fun addCandidate(candidate: NewCandidate, verifyingUserId: UUID): Candidate {
+        val thisCandiateId = UUID.randomUUID()
+        dbQuery {
+            Candidates.insert {
+                it[candidateId] = thisCandiateId
+                it[userId] = candidate.userId
+                it[positionId] = candidate.positionId
+                it[registrationDate] = System.currentTimeMillis()
+                it[verified] = true
+                it[verifiedBy] = verifyingUserId
+            }
+        }
+
+        return getCandidate(thisCandiateId)!!
+    }
+
     private fun toCandidate(row: ResultRow): Candidate = Candidate(
         userId = row[Candidates.userId],
         candidateId = row[Candidates.candidateId],
