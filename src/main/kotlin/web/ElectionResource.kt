@@ -12,6 +12,7 @@ import org.apache.hc.core5.http.HttpStatus
 import service.*
 import java.lang.IllegalStateException
 import java.util.*
+import kotlin.collections.LinkedHashMap
 
 @ExperimentalCoroutinesApi
 fun Route.election(electionService: ElectionService, positionService: PositionService, candidateService: CandidateService, voterService: VoterService, voteService: VoteService) {
@@ -112,7 +113,7 @@ fun Route.election(electionService: ElectionService, positionService: PositionSe
             post("/{electionId}/vote") {
                 val electionIdParam = call.parameters["electionId"] ?: throw IllegalStateException("Must provide id")
                 val electionId = UUID.fromString(electionIdParam)
-                val votes = call.receive<List<Vote>>()
+                val votes = call.receive<List<LinkedHashMap<String, String>>>()
                 val election = electionService.getElection(electionId)
                 val votingTime = System.currentTimeMillis()
                 val loggedInUser = call.authentication.principal as User
@@ -122,13 +123,14 @@ fun Route.election(electionService: ElectionService, positionService: PositionSe
                     // check if user has voted
                     val voter = voterService.getVoter(loggedInUser.userId, electionId)!!
                     if (!voter.voted) {
-                        votes.forEach{
-                            it.voterId = voterId
-                            voteService.addVote(it)
+                        for (voteMap in votes){
+                            val candidateId = UUID.fromString(voteMap.getValue("candidateId"))
+                            val vote = Vote(candidateId, voterId)
+                            voteService.addVote(vote)
                         }
                         call.respond(
                             HttpStatusCode.Created,
-                            mapOf("message" to "Votes cast successfully")
+                            voterService.updateToVoted(voterId)
                         )
                     } else {
                         call.respond(
@@ -144,7 +146,12 @@ fun Route.election(electionService: ElectionService, positionService: PositionSe
                 }
             }
             get("/{electionId}/results") {
-
+                val electionIdParam = call.parameters["electionId"] ?: throw IllegalStateException("Must provide id")
+                val electionId = UUID.fromString(electionIdParam)
+                call.respond(
+                    HttpStatusCode.OK,
+                    voteService.countVotes(electionId)
+                )
             }
         }
     }

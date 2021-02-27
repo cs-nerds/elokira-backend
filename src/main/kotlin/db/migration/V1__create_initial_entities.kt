@@ -18,6 +18,7 @@ class V1__create_initial_entities: BaseJavaMigration() {
             SchemaUtils.create(Positions)
             SchemaUtils.create(Candidates)
             SchemaUtils.create(Voters)
+            SchemaUtils.create(Votes)
 
             // Create an Admin User
             val firstUserId = UUID.randomUUID()

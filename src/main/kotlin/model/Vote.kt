@@ -12,7 +12,7 @@ object Votes : Table() {
 
 data class Vote (
     val candidateId: UUID,
-    var voterId: UUID?,
+    var voterId: UUID? = null,
     val dateVoted: Long? = System.currentTimeMillis()
 )
 

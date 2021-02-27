@@ -18,8 +18,11 @@ class VoteService {
         }
     }
 
-    suspend fun countVotes(electionId: UUID): List<VoteCount> {
-        return Votes.innerJoin(Elections)
+    suspend fun countVotes(electionId: UUID): List<VoteCount> = dbQuery {
+        Votes
+            .innerJoin(Candidates)
+            .innerJoin(Positions)
+            .innerJoin(Elections)
             .slice(
                 Votes.candidateId,
                 Elections.electionName,
