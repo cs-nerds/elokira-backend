@@ -72,6 +72,10 @@ fun Route.user(userService: UserService, loginService: LoginService, authService
             } else {
                 try {
                     verifyUser(unverifiedUser, config)
+                    val noCountryCode = Regex("^0+")
+                    newUser.phoneNumber = noCountryCode.replace(
+                        newUser.phoneNumber, "+254"
+                    )
                     val user = userService.addUser(newUser)
                     val login = createLogin(user, loginService, config)
                     call.respond(HttpStatusCode.Created, mapOf("loginId" to login.loginId))

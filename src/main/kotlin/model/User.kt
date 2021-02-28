@@ -33,7 +33,7 @@ data class NewUser(
     val userId: UUID? = UUID.randomUUID(),
     val firstName: String,
     val lastName: String,
-    val phoneNumber: String,
+    var phoneNumber: String,
     val idNumber: String
 )
 
