@@ -37,10 +37,13 @@ fun Application.module() {
         header(HttpHeaders.AccessControlRequestHeaders)
         header(HttpHeaders.AccessControlRequestMethod)
         exposeHeader(HttpHeaders.AccessControlAllowOrigin)
+        exposeHeader(HttpHeaders.AccessControlAllowCredentials)
+        exposeHeader(HttpHeaders.AccessControlAllowMethods)
+        exposeHeader(HttpHeaders.AccessControlAllowHeaders)
         anyHost()
         allowCredentials = true
         allowNonSimpleContentTypes = true
-        maxAgeInSeconds = 360000
+        maxAgeInSeconds = 1728000 // preflight valid for 90 days
     }
 
     install(ContentNegotiation) {
