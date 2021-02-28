@@ -33,6 +33,7 @@ fun Application.module() {
         method(HttpMethod.Post)
         method(HttpMethod.Delete)
         anyHost()
+        exposeHeader("Access-Control-Allow-Origin")
         allowCredentials = true
         allowNonSimpleContentTypes = true
         maxAgeInSeconds = 360000
