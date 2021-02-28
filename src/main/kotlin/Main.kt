@@ -32,8 +32,12 @@ fun Application.module() {
         method(HttpMethod.Head)
         method(HttpMethod.Post)
         method(HttpMethod.Delete)
+        header(HttpHeaders.ContentType)
+        header(HttpHeaders.Authorization)
+        header(HttpHeaders.AccessControlRequestHeaders)
+        header(HttpHeaders.AccessControlRequestMethod)
+        exposeHeader(HttpHeaders.AccessControlAllowOrigin)
         anyHost()
-        exposeHeader("Access-Control-Allow-Origin")
         allowCredentials = true
         allowNonSimpleContentTypes = true
         maxAgeInSeconds = 360000
