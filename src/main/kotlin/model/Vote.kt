@@ -17,7 +17,9 @@ data class Vote (
 )
 
 data class VoteCount (
-    val candidateId: UUID,
-    val votes: Long,
-    val electionName: String
+    val candidateFirstName: String,
+    val candidateLastName: String,
+    val electionName: String,
+    val positionName: String,
+    val votes: Long
 )

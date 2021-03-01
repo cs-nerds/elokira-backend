@@ -23,21 +23,26 @@ class VoteService {
             .innerJoin(Candidates)
             .innerJoin(Positions)
             .innerJoin(Elections)
+            .innerJoin(Users)
             .slice(
-                Votes.candidateId,
+                Users.firstName,
+                Users.lastName,
                 Elections.electionName,
+                Positions.positionName,
                 Votes.candidateId.countDistinct()
             )
             .select{
                 (Elections.electionId eq electionId)
             }
-            .groupBy(Votes.candidateId)
+            .groupBy(Votes.candidateId, Elections.electionName)
             .map { toVoteCount(it) }
     }
 
     private fun toVoteCount(row: ResultRow): VoteCount = VoteCount(
-        candidateId = row[Votes.candidateId],
+        candidateFirstName = row[Users.firstName],
+        candidateLastName = row[Users.lastName],
+        electionName = row[Elections.electionName],
+        positionName = row[Positions.positionName],
         votes = row[Votes.candidateId.countDistinct()],
-        electionName = row[Elections.electionName]
     )
 }
