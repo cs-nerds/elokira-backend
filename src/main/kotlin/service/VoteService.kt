@@ -31,6 +31,7 @@ class VoteService {
             .select{
                 (Elections.electionId eq electionId)
             }
+            .groupBy(Candidates.positionId)
             .map { toVoteCount(it) }
     }
 
