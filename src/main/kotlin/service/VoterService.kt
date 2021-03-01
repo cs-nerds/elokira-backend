@@ -29,10 +29,18 @@ class VoterService {
         }.mapNotNull { toVoter(it) }.singleOrNull()
     }
 
+    suspend fun getVoterById(voterId: UUID): Voter = dbQuery {
+        Voters.select{
+            (Voters.voterId eq voterId)
+        }.mapNotNull { toVoter(it) }.single()
+    }
+
     suspend fun updateToVoted(voterId: UUID) = dbQuery {
         Voters.update({Voters.voterId eq voterId}) {
             it[voted] = true
         }
+
+        getVoterById(voterId)
     }
 
     private fun toVoter(row: ResultRow): Voter = Voter(
