@@ -1,10 +1,7 @@
 package service
 
 import model.*
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.countDistinct
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import service.DatabaseFactory.dbQuery
 import java.util.*
 
@@ -23,7 +20,7 @@ class VoteService {
             .innerJoin(Candidates)
             .innerJoin(Positions)
             .innerJoin(Elections)
-            .innerJoin(Users)
+            .innerJoin(Users, {Candidates.userId}, { userId })
             .slice(
                 Users.firstName,
                 Users.lastName,
