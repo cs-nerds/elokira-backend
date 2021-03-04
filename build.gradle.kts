@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val ktorVersion = "1.5.0"
 val exposedVersion = "0.29.1"
 val postgresVersion = "42.2.19.jre7"
-val hikariCpVersion = "4.0.2"
+val hikariCpVersion = "4.0.3"
 val flywayVersion = "7.5.3"
 val ktorFlywayVersion = "1.2.2"
 val logbackVersion = "1.2.3"
