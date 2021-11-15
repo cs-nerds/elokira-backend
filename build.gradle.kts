@@ -16,7 +16,7 @@ val webDriverVersion = "4.3.1"
 val guavaVersion = "30.1-jre"
 
 plugins {
-    kotlin("jvm") version "1.4.30"
+    kotlin("jvm") version "1.6.0"
     application
 }
 
